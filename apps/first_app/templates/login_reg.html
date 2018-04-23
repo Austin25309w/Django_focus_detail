@@ -10,20 +10,28 @@
 h1, h2, h5{
 	font-family: sans-serif;
 }
+.box  {
+	border: 1px solid black ;
+}
+.pw {
+	color: #48BDEB;
+}
 </style>
 <body>
+
 	<h1>Login and Registration</h1>
-	<div style="display: inline-block;">
-
-		<!-- <p style="color: red; font-size: 50px">{{ message }}</p> -->
-
-		{% if messages %}
+	{% if messages %}
         <ul>
             {% for message in messages %}
                 <li style="color: red;">{{ message }}</li>
             {% endfor %}
         </ul>
     {% endif %}
+	<div class="box" style="display: inline-block;">
+
+		<!-- <p style="color: red; font-size: 50px">{{ message }}</p> -->
+
+		
 
 		<h2>Register here!</h2>
 		
@@ -31,30 +39,31 @@ h1, h2, h5{
 		<form action="/validate", method="post">
 			{% csrf_token %}
 
-			<h5>First name:</h5>
-			<input type="text" name="first_name" value="{{request.session.first_name}}">
+			<h5>Name:</h5>
+			<input type="text" name="name" value="{{request.session.name}}">
 
-
-			<h5>Last name:</h5>
-			<input type="text" name="last_name" value ="{{request.session.last_name}}">
-			<h5>Email:</h5>
-			<input type="text" name="reg_email" value ="{{request.session.email}}">
+			<h5>Username:</h5>
+			<input type="text" name="reg_username" value ="{{request.session.username}}">
 			<h5>Password:</h5>
 			<input type="password" name="password">
+			<p class="pw">*Password should be at least 8 chacaters</p>
 			<h5>Confirm password:</h5>
 			<input type="password" name="con_pass">
+			<p>Date Hired:</p>
+			<input type="date" name="date">
+
 
 			<button style="background-color: #21AAE1; color: white;">Register!</button>
 		</form>
 	</div>
 
-	<div style="display: inline-block; vertical-align: top; margin-left: 20px">
+	<div class= "box" style="display: inline-block; vertical-align: top; margin-left: 20px">
 		
 		<form action="/login", method="post">
 			{% csrf_token %}		
 			<h2>Login here!</h2>
-			<h5>Email:</h5>
-			<input type="text" name="log_email">
+			<h5>Username:</h5>
+			<input type="text" name="log_username">
 			<h5>Password:</h5>
 			<input type="password" name="log_password">
 			<button style="background-color: #21AAE1; color: white;">Log in</button>

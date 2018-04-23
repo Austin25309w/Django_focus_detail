@@ -10,45 +10,73 @@ def index(request):
 
 def validate(request):
 	# if request.method == "POST":
-	errors = User.objects.reg_validator(request.POST)
+	errors = Guest.objects.reg_validator(request.POST)
 	if len(errors):
-		request.session['first_name'] =request.POST['first_name']
-		request.session['last_name'] =request.POST['last_name']
+		request.session['name'] =request.POST['name']
+		request.session['username'] =request.POST['reg_username']
 		for key, value in errors.items():
 			messages.error(request, value)
 		return redirect("/")
 	else:
-		guest = User.objects.create()
-		guest.first_name = request.POST['first_name']
-		guest.last_name = request.POST['last_name']
-		guest.email = request.POST['reg_email']
+		guest = Guest.objects.create()
+		guest.name = request.POST['name']
+		guest.username = request.POST['reg_username']
 		guest.password =  bcrypt.hashpw(request.POST['password'].encode(), bcrypt.gensalt())		
 
-		
 		guest.save()
 		request.session['id'] = guest.id
 
 		messages.success(request, "successfully registered! ")
        	
-		return redirect('/success')
+	return redirect('/dashboard')
 
 def login(request):
-	errors = User.objects.log_validator(request.POST)
+	errors = Guest.objects.log_validator(request.POST)
 	if len(errors):
 		for key, value in errors.items():
 			messages.error(request, value)
 		return redirect("/")
 	else:
-		guest = User.objects.get(email = request.POST['log_email'])
-		request.session['first_name'] = guest.first_name
+		guest = Guest.objects.get(username = request.POST['log_username'])
+		request.session['name'] = guest.name
 		request.session['id'] = guest.id
 
 		messages.success(request, "successfully registered! ")
-		return redirect('/success')
+		return redirect('/dashboard')
 
-def success (request):
-	
-	return render(request,'success.html')
+
+
+def dashboard(request):
+	context = {"users" : Guest.objects.all()}		
+	return render(request, "dashboard.html", context)
+
+
+def add(request):
+	if request.method == "POST":
+		item = Item.objects.create()
+		item.name =request.POST['item_name']
+		item.save()
+	return redirect("/process")
+
+def process(request):
+	return render(request, 'show.html')
+
+
+
+def delete(request, id):
+	deleteuser =Guest.objects.get(id=id)
+	deleteuser.delete()
+	return redirect('/dashboard')
+
+
+# def show(request, id):
+# 	show = Guest.objects.get(id=id)
+# 	user = {
+# 		"id" : show.id,
+# 		"username" : show.username,
+# 		"date" : show.created_at
+# 		}
+# 	return render(request, "show.html", user)
 
 def logout(request):
 	request.session.clear()
